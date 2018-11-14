@@ -37,11 +37,10 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.volley:volley:1.1.1'
     compile 'com.android.support:recyclerview-v7:27.1.1'
+
+    //voice chat
+    compile(name: 'sinch-android-rtc', version: '+', ext: 'aar')
+
 }
-
-
-
-
-
 
 apply plugin: 'com.google.gms.google-services'

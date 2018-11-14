@@ -20,6 +20,11 @@ allprojects {
     repositories {
         google()
         jcenter()
+
+        //voice chat
+        flatDir {
+            dirs 'libs'
+        }
     }
 }
 

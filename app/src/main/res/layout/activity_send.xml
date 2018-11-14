@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:alpha="0.88"
     android:background="@drawable/camilo"
-    tools:context="gmsproduction.com.pushpush.SendActivity">
+    tools:context="gmsproduction.com.pushpush.Activity.SendActivity">
 
 
     <TextView
