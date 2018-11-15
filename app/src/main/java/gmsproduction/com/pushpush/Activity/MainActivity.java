@@ -3,21 +3,25 @@ package gmsproduction.com.pushpush.Activity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.pusher.pushnotifications.PushNotifications;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import gmsproduction.com.pushpush.Adapter.PagerViewAdapter;
 import gmsproduction.com.pushpush.R;
 import gmsproduction.com.pushpush.VoiceChat.BaseActivity;
-import gmsproduction.com.pushpush.VoiceChat.VoiceService;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
@@ -38,7 +42,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void sendToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
-
         finish();
     }
 
@@ -46,6 +49,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        goOnline();
 
         //permissions
         if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -71,6 +75,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             }
         });
+
+
+        FirebaseMessaging.getInstance().subscribeToTopic(FirebaseAuth.getInstance().getUid())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "win";
+                        if (!task.isSuccessful()) {
+                            msg = "lose";
+                        }
+                        Log.d("ddd", msg);
+                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
     }
 
 
@@ -143,10 +163,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     }
 
-
-    public void pushNotifications(String interest) {
-        PushNotifications.start(getApplicationContext(), "54807e2c-4fb6-4eac-910e-0c017fc99617");
-        PushNotifications.subscribe(interest);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        goOfline();
+        Toast.makeText(this, "destroy", Toast.LENGTH_SHORT).show();
     }
+
 
 }

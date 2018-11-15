@@ -171,18 +171,19 @@ public class SendActivity extends AppCompatActivity {
 
     private JSONObject mObject(String title,String body, String userID){
         JSONObject mainObject = new JSONObject();
-        JSONArray interests = new JSONArray();
         JSONObject fcm = new JSONObject();
-        JSONObject notification=new JSONObject();
 
+        String toic= "'"+userID+"' in topics || 'all' in topics";
 
         try {
-            interests.put(userID);
-            notification.put("title",title);
-            notification.put("body",body);
-            fcm.put("notification",notification);
-            mainObject.put("interests",interests);
-            mainObject.put("fcm",fcm);
+            mainObject.put("condition",toic);
+
+            fcm.put("body",body);
+            fcm.put("title",title);
+            fcm.put("content_available",true);
+            fcm.put("priority","high");
+
+            mainObject.put("data",fcm);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -192,8 +193,8 @@ public class SendActivity extends AppCompatActivity {
         return mainObject;
     }
 
-    private void pusher(JSONObject object){
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, url, object, new Response.Listener<JSONObject>() {
+    private void sendNote(JSONObject object){
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, "https://fcm.googleapis.com/fcm/send", object, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Toast.makeText(SendActivity.this, "Message Sent.", Toast.LENGTH_LONG).show();
@@ -209,7 +210,7 @@ public class SendActivity extends AppCompatActivity {
 
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("Content-Type", "application/json");
-                params.put("Authorization", "Bearer 0B4D7303789F9884425BFF3A0772436");
+                params.put("Authorization", "key=AIzaSyDWU-Zc-zD-UO2PqlsWnJKibIF4H3WaCeA");
                 return params;
             }
         };

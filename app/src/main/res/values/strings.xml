@@ -29,4 +29,9 @@
     <string name="hint_note">Notifications</string>
 
 
+    <string name="channela_name">PushPushCN</string>
+    <string name="channel_description">this is notification channel for PushPush app</string>
+
+
+
 </resources>

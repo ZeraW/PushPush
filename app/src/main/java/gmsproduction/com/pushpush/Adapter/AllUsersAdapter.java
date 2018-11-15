@@ -50,6 +50,7 @@ public class AllUsersAdapter extends RecyclerView.Adapter<AllUsersAdapter.ViewHo
                 intent.putExtra("userId",mList.get(position).getId());
                 intent.putExtra("userName",mList.get(position).getName());
                 intent.putExtra("userImg",mList.get(position).getImage());
+                intent.putExtra("status",mList.get(position).getStatus());
                 context.startActivity(intent);
             }
         });

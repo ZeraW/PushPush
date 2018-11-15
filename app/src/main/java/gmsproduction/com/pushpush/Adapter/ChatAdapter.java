@@ -56,7 +56,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             holder.profileImage.setVisibility(View.GONE);
             holder.linearLayout.setGravity(Gravity.END);
             LinearLayout.LayoutParams relativeParams = (LinearLayout.LayoutParams)holder.relativepadding.getLayoutParams();
-            relativeParams.setMargins(320, 0, 20, 0);  // left, top, right, bottom
+            relativeParams.setMargins(220, 0, 20, 0);  // left, top, right, bottom
             holder.relativepadding.setLayoutParams(relativeParams);
 
         }else if (currentPosition.getFrom().equals(hisID)){
@@ -67,7 +67,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             holder.relativeLayout.setBackground(context.getResources().getDrawable(R.drawable.chatback1));
 
             LinearLayout.LayoutParams relativeParams = (LinearLayout.LayoutParams)holder.relativepadding.getLayoutParams();
-            relativeParams.setMargins(20, 0, 320, 0);  // left, top, right, bottom
+            relativeParams.setMargins(20, 0, 220, 0);  // left, top, right, bottom
             holder.relativepadding.setLayoutParams(relativeParams);
 
 

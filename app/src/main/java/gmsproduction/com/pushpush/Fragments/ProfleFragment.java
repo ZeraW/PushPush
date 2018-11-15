@@ -51,7 +51,6 @@ public class ProfleFragment extends Fragment {
         iV_ProfilePic = view.findViewById(R.id.Profile_Img);
 
         userId = mAuth.getCurrentUser().getUid();
-        ((MainActivity)getActivity()).pushNotifications(userId);
 
 
 
@@ -61,7 +60,7 @@ public class ProfleFragment extends Fragment {
                 user_name = documentSnapshot.getString("name");
                 String user_Image= documentSnapshot.getString("image");
 
-                sharedpref(userId+"#"+user_name);
+                sharedpref(userId+"#"+user_name,user_name);
                 tV_Profilename.setText(user_name);
                 Picasso.with(container.getContext()).load(user_Image).fit().centerCrop().placeholder(R.drawable.camilo).into(iV_ProfilePic);
             }
@@ -83,13 +82,14 @@ public class ProfleFragment extends Fragment {
         return view;
     }
 
-    private void sharedpref(String name){
+    private void sharedpref(String name,String myName){
         if (getActivity()!=null){
             SharedPreferences.Editor editor = getActivity().getSharedPreferences("users", MODE_PRIVATE).edit();
             editor.putString("name", name);
+            editor.putString("MyName", myName);
+
             editor.apply();
             getActivity().startService(new Intent(getContext(),VoiceService.class));
-
         }
     }
 

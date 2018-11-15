@@ -10,7 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -18,6 +22,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import gmsproduction.com.pushpush.Adapter.AllUsersAdapter;
 import gmsproduction.com.pushpush.R;
@@ -59,6 +64,8 @@ public class AllUserFragment extends Fragment {
         super.onStart();
         mList.clear();
         if (getActivity()!=null){
+
+
             mFireStore.collection("Users").addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
@@ -67,10 +74,12 @@ public class AllUserFragment extends Fragment {
                             String user_Id = doc.getDocument().getId();
                             String name = doc.getDocument().getString("name");
                             String image = doc.getDocument().getString("image");
+                            String online = doc.getDocument().getString("status");
 
-                            mList.add(new UsersModel(user_Id,name,image));
-                            mAdapter.notifyDataSetChanged();
-
+                            if (!FirebaseAuth.getInstance().getUid().equals(user_Id)) {
+                                mList.add(new UsersModel(user_Id, name, image,online));
+                                mAdapter.notifyDataSetChanged();
+                            }
                         }
 
                     }

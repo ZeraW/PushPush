@@ -181,6 +181,7 @@ public class VoiceService extends Service {
 
     private class SinchCallClientListener implements CallClientListener {
 
+
         @Override
         public void onIncomingCall(CallClient callClient, Call call) {
             Log.d(TAG, "Incoming call");
@@ -189,9 +190,11 @@ public class VoiceService extends Service {
             intent.putExtra(LOCATION, call.getHeaders().get("location"));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             VoiceService.this.startActivity(intent);
-            startActivity(intent);
+            //startActivity(intent);
             Log.e("callz","u have new call");
            //call.answer();
+
+
         }
     }
     private String  getname(){

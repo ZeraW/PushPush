@@ -56,6 +56,20 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 />
+            <TextView
+                android:id="@+id/his_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/his_imgview"
+                android:layout_toStartOf="@id/phone_call"
+                android:singleLine="true"
+                android:text="status"
+                android:textColor="#A9A9A9"
+                android:layout_below="@+id/his_nameTxtview"
+                android:textSize="12sp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                />
             <ImageView
                 android:id="@+id/phone_call"
                 android:layout_width="40dp"

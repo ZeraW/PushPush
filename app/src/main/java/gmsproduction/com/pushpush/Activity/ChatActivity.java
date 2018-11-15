@@ -1,7 +1,9 @@
 package gmsproduction.com.pushpush.Activity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -20,11 +22,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -46,12 +51,13 @@ import gmsproduction.com.pushpush.Models.ChatModel;
 import gmsproduction.com.pushpush.R;
 import gmsproduction.com.pushpush.VoiceChat.BaseActivity;
 import gmsproduction.com.pushpush.VoiceChat.CallScreenActivity;
+import gmsproduction.com.pushpush.VoiceChat.PushNotifications.MobileToMobileMSG;
 import gmsproduction.com.pushpush.VoiceChat.VoiceService;
 
 public class ChatActivity extends BaseActivity {
     private EditText eT_Message;
     private ImageButton btn_Send;
-    private String myID, hisID, hisName, hisImg;
+    private String myID, hisID, hisName, hisImg,hisStatus;
     private FirebaseFirestore mFireStore;
     ProgressBar progressBar;
     private RecyclerView mRecyclerView;
@@ -60,13 +66,16 @@ public class ChatActivity extends BaseActivity {
     private SwipeRefreshLayout mRefreshLayout;
     LinearLayoutManager linearLayoutManager;
     private CircleImageView hisProfileImage;
-    private TextView hisnameText;
+    private TextView hisnameText,hisStatusText;
 
     @Override
     protected void onStart() {
         super.onStart();
         mList.clear();
         getMsg();
+
+
+
     }
 
     @Override
@@ -74,6 +83,7 @@ public class ChatActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         Initi();
+
         btn_Send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,7 +101,7 @@ public class ChatActivity extends BaseActivity {
         }
     }
 
-    private void chat(String msg) {
+    private void chat(final String msg) {
         Date currentTime = Calendar.getInstance().getTime();
         Log.e("time", "time : " + currentTime);
         String myPerspective = "Chat/" + myID + "/" + hisID;
@@ -105,7 +115,7 @@ public class ChatActivity extends BaseActivity {
             @Override
             public void onSuccess(DocumentReference documentReference) {
                 mRecyclerView.smoothScrollToPosition(999999999);
-
+                new MobileToMobileMSG(ChatActivity.this).sendMSG("From : "+getname(),msg,hisID);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -130,6 +140,8 @@ public class ChatActivity extends BaseActivity {
             }
         });
 
+        getstatus(hisID);
+
     }
 
     private void getMsg() {
@@ -153,10 +165,13 @@ public class ChatActivity extends BaseActivity {
                 }
             }
         });
+
+        getstatus(hisID);
     }
 
     private void Initi() {
         hisProfileImage = findViewById(R.id.his_imgview);
+        hisStatusText=findViewById(R.id.his_status);
         hisnameText = findViewById(R.id.his_nameTxtview);
         mFireStore = FirebaseFirestore.getInstance();
         eT_Message = findViewById(R.id.chat_message_view);
@@ -172,14 +187,14 @@ public class ChatActivity extends BaseActivity {
         });
 
 
-
-
         //get extra
         hisID = getIntent().getStringExtra("userId");
         hisName = getIntent().getStringExtra("userName");
         hisImg = getIntent().getStringExtra("userImg");
+        //hisStatus = getIntent().getStringExtra("status");
         Picasso.with(getApplicationContext()).load(hisImg).fit().centerInside().into(hisProfileImage);
         hisnameText.setText(hisName);
+
 
 
         myID = FirebaseAuth.getInstance().getUid();
@@ -213,6 +228,7 @@ public class ChatActivity extends BaseActivity {
                 callButtonClicked(hisID,hisName);
             }
         });
+
     }
 
     private void callButtonClicked(String hisids,String hisnames) {
@@ -235,4 +251,44 @@ public class ChatActivity extends BaseActivity {
     }
 
 
+    private void getstatus(String userID){
+        mFireStore.collection("Users").document(userID).get().addOnCompleteListener(this,new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> map = document.getData();
+                        for (Map.Entry<String, Object> entry : map.entrySet()) {
+                            if (entry.getKey().equals("status")) {
+                                hisStatus = entry.getValue().toString();
+
+                                if (!hisStatus.isEmpty()){
+                                    if (hisStatus.equals("on")){
+                                        hisStatusText.setText("Online");
+                                        hisStatusText.setTextColor(0xAA228B22);
+                                    }else if (hisStatus.equals("off")){
+                                        hisStatusText.setText("Offline");
+                                        hisStatusText.setTextColor(0xAAA9A9A9);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        goOfline();
+    }
+
+    private String getname(){
+        //how to get shared pref in service
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
+        return prefs.getString("MyName", "No name defined");
+    }
 }

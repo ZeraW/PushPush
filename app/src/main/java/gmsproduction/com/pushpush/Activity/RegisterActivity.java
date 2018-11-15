@@ -113,12 +113,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                     if (uploadtask.isSuccessful()){
 
                                         //get the uploaded img url
-                                        String imgURL = uploadtask.getResult().getDownloadUrl().toString();
+                                        String imgURL = uploadtask.getResult().getMetadata().getReference().getDownloadUrl().toString();
                                         //put the data into map
                                         Map<String,Object> userMap = new HashMap<>();
                                         userMap.put("name",name);
                                         userMap.put("image",imgURL);
-
+                                        userMap.put("status","off");
 
 
                                         //here where are we going to store all of the users

@@ -7,13 +7,18 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public abstract class BaseActivity extends AppCompatActivity implements ServiceConnection {
+    private FirebaseFirestore mFireStore;
 
     private VoiceService.SinchServiceInterface mSinchServiceInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFireStore = FirebaseFirestore.getInstance();
         getApplicationContext().bindService(new Intent(this, VoiceService.class), this,
                 BIND_AUTO_CREATE);
     }
@@ -44,6 +49,20 @@ public abstract class BaseActivity extends AppCompatActivity implements ServiceC
 
     protected VoiceService.SinchServiceInterface getSinchServiceInterface() {
         return mSinchServiceInterface;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        goOfline();
+    }
+
+    public void goOnline(){
+        mFireStore.collection("Users").document(FirebaseAuth.getInstance().getUid()).update("status","on");
+    }
+
+    public void goOfline(){
+        mFireStore.collection("Users").document(FirebaseAuth.getInstance().getUid()).update("status","off");
     }
 
 }

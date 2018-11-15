@@ -78,7 +78,6 @@ public class CallScreenActivity extends BaseActivity {
             String[] parts = x.split("#");
             String part2 = parts[1];
 
-
             mCallerName.setText(part2);
             mCallState.setText(call.getState().toString());
         } else {
@@ -110,10 +109,7 @@ public class CallScreenActivity extends BaseActivity {
     private void endCall() {
         mAudioPlayer.stopProgressTone();
         Call call = getSinchServiceInterface().getCall(mCallId);
-        if (call != null) {
-            call.hangup();
-
-        }
+        if (call != null) {call.hangup();}
         finish();
     }
 
