@@ -76,6 +76,8 @@ public class ProfleFragment extends Fragment {
                 mAuth.signOut();
                 Intent intent = new Intent(getContext(),LoginActivity.class);
                 startActivity(intent);
+                if (getActivity()!=null)
+                getActivity().finish();
             }
         });
 

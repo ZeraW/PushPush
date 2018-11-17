@@ -2,20 +2,28 @@ package gmsproduction.com.pushpush.VoiceChat;
 
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallEndCause;
 import com.sinch.android.rtc.calling.CallListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -33,7 +41,8 @@ public class CallScreenActivity extends BaseActivity {
     private TextView mCallDuration;
     private TextView mCallState;
     private TextView mCallerName;
-
+    private ImageView mImgView;
+    private String img;
     private class UpdateCallDurationTask extends TimerTask {
 
         @Override
@@ -51,7 +60,7 @@ public class CallScreenActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.callscreen);
-
+        mImgView = findViewById(R.id.callerIMG);
         mAudioPlayer = new AudioPlayer(this);
         mCallDuration = (TextView) findViewById(R.id.callDuration);
         mCallerName = (TextView) findViewById(R.id.remoteUser);
@@ -66,7 +75,17 @@ public class CallScreenActivity extends BaseActivity {
         });
         mCallStart = System.currentTimeMillis();
         mCallId = getIntent().getStringExtra(VoiceService.CALL_ID);
+
+
+        String[] parts = mCallId.split("#");
+        String part2 = parts[0];
+        Log.e("imgs",""+part2);
+
+        Picasso.with(CallScreenActivity.this).load(getIntent().getStringExtra("hisImg")).fit().into(mImgView);
     }
+
+
+
 
     @Override
     public void onServiceConnected() {

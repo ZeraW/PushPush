@@ -243,13 +243,13 @@ public class ChatActivity extends BaseActivity {
 
             Intent callScreen = new Intent(this, CallScreenActivity.class);
             callScreen.putExtra(VoiceService.CALL_ID, callId);
-            callScreen.putExtra("hisname",hisnames);
+            callScreen.putExtra("hiId",hisids);
+            callScreen.putExtra("hisImg",hisImg);
             startActivity(callScreen);
         }
 
 
     }
-
 
     private void getstatus(String userID){
         mFireStore.collection("Users").document(userID).get().addOnCompleteListener(this,new OnCompleteListener<DocumentSnapshot>() {

@@ -29,6 +29,7 @@
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/INC_HisIMG"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:src="@drawable/callbg"

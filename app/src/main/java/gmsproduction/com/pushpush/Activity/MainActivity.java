@@ -49,7 +49,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        goOnline();
+        if (FirebaseAuth.getInstance().getUid() != null) {
+            goOnline();
+        }
 
         //permissions
         if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -77,22 +79,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
 
 
-        FirebaseMessaging.getInstance().subscribeToTopic(FirebaseAuth.getInstance().getUid())
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        String msg = "win";
-                        if (!task.isSuccessful()) {
-                            msg = "lose";
-                        }
-                        Log.d("ddd", msg);
-                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-                    }
-                });
+        if (FirebaseAuth.getInstance().getUid() != null) {
 
+            FirebaseMessaging.getInstance().subscribeToTopic(FirebaseAuth.getInstance().getUid())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            String msg = "win";
+                            if (!task.isSuccessful()) {
+                                msg = "lose";
+                            }
+                            Log.d("ddd", msg);
+                            Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+        }
 
     }
-
 
 
     private void changeTabs(int position) {
